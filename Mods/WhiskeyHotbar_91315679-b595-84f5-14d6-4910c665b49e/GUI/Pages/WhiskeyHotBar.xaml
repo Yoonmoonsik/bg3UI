@@ -479,8 +479,12 @@
                         <!-- WhiskeyHotbar TEST: with the FixedSideBar section collapsed, Passives' shutter is the Custom section's left edge; lock it so Custom always shows 12 columns -->
                         <DataTrigger Binding="{Binding HotBarType}" Value="PassivesHotBar">
                             <Setter TargetName="PART_SizerThumb" Property="IsHitTestVisible" Value="False"/>
-                            <!-- WhiskeyHotbar TEST: locked shutter keeps its 36 width but is not drawn -->
-                            <Setter TargetName="Shutter" Property="Visibility" Value="Hidden"/>
+                            <!-- WhiskeyHotbar: locked shutter drawn with saturation 0 (replaces its DropShadowEffect; same effect vanilla uses on dead portraits; seen gray in-game 2026-11-04) -->
+                            <Setter TargetName="Shutter" Property="Effect">
+                                <Setter.Value>
+                                    <ls:SaturationEffect Saturation="0"/>
+                                </Setter.Value>
+                            </Setter>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding DataContext.CurrentShownDeck, RelativeSource={RelativeSource AncestorType=ls:UIWidget}, Converter={StaticResource NullToBoolFalseConverter}}" Value="True">
                             <Setter TargetName="PART_SizerThumb" Property="Visibility" Value="Collapsed"/>
