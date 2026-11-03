@@ -4012,6 +4012,12 @@
                             </MenuItem>
                         </Menu>
 
+                        <!-- WhiskeyHotbar: camp supplies / inspiration / party gold from the Party Panel header (HeaderInspirationPointsGold, Library/DataTemplates.xaml),
+                             anchored at the right edge of RightPart so it sits to the right of the rest button (verified in-game 2026-11-04) -->
+                        <Canvas HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="0" Height="0">
+                            <Control x:Name="WhiskeyPartyResources" Canvas.Left="12" Canvas.Bottom="100" Template="{StaticResource HeaderInspirationPointsGold}" DataContext="{Binding CurrentPlayer}"/>
+                        </Canvas>
+
                         <ls:LSButton x:Name="BackToPlayableCombatantButton" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="98,-140,0,0" Template="{StaticResource FloatingFrameButton}"
                                      Command="{Binding SelectActiveCharacterCombatant}">
                             <ls:LSButton.ToolTip>
