@@ -231,10 +231,11 @@
                 <ImageBrush x:Key="HotbarSlotBackgroundTiles" AlignmentX="Left" AlignmentY="Top" ImageSource="pack://application:,,,/GustavNoesisGUI;component/Assets/BottomBar/hotbarSlot_bg.png" TileMode="Tile" Stretch="None" ViewboxUnits="Absolute" ViewportUnits="Absolute" Viewbox="0,0,88,88" Viewport="0,0,88,88"/>
 
 
-                <!-- WhiskeyHotbar: +1408 (16 * HotbarSlotSize 88) on each deck width -->
-                <System:Double x:Key="FullWidth">2906.0</System:Double>
-                <System:Double x:Key="DeckWidth">2906.0</System:Double>
-                <System:Double x:Key="DeckWidthShapeshift">2858.0</System:Double>
+                <!-- WhiskeyHotbar: Custom at 12 columns -> 33 columns * 88 + 6 shutters * 36 = 3120 (verified in-game 2026-11-03);
+                     TEST FixedSideBar section (2 columns + shutter = 212) collapsed -> 2908. Shapeshift keeps vanilla's -48 offset -->
+                <System:Double x:Key="FullWidth">2908.0</System:Double>
+                <System:Double x:Key="DeckWidth">2908.0</System:Double>
+                <System:Double x:Key="DeckWidthShapeshift">2860.0</System:Double>
                 <Thickness x:Key="DeckMarginShapeshift">52,26,36,16</Thickness>
 
                 <!--ITEMS eg THROW-->
@@ -468,6 +469,18 @@
 
                         <DataTrigger Binding="{Binding Path=IsFixedSize}" Value="True">
                             <Setter TargetName="PART_SizerThumb" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                        <!-- WhiskeyHotbar: the Custom section's own (right) shutter is shown but cannot be dragged (verified in-game 2026-11-03) -->
+                        <DataTrigger Binding="{Binding HotBarType}" Value="CustomHotBar">
+                            <Setter TargetName="PART_SizerThumb" Property="IsHitTestVisible" Value="False"/>
+                            <!-- WhiskeyHotbar TEST: locked shutter keeps its 36 width but is not drawn -->
+                            <Setter TargetName="Shutter" Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                        <!-- WhiskeyHotbar TEST: with the FixedSideBar section collapsed, Passives' shutter is the Custom section's left edge; lock it so Custom always shows 12 columns -->
+                        <DataTrigger Binding="{Binding HotBarType}" Value="PassivesHotBar">
+                            <Setter TargetName="PART_SizerThumb" Property="IsHitTestVisible" Value="False"/>
+                            <!-- WhiskeyHotbar TEST: locked shutter keeps its 36 width but is not drawn -->
+                            <Setter TargetName="Shutter" Property="Visibility" Value="Hidden"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding DataContext.CurrentShownDeck, RelativeSource={RelativeSource AncestorType=ls:UIWidget}, Converter={StaticResource NullToBoolFalseConverter}}" Value="True">
                             <Setter TargetName="PART_SizerThumb" Property="Visibility" Value="Collapsed"/>
@@ -1100,8 +1113,8 @@
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- WhiskeyHotbar: bar_bottomBg is 2424x52; stretched by the same +1408 as the deck -->
-                    <Image Grid.ColumnSpan="3" Source="{StaticResource BarBottomBg}" Margin="0,0,0,28" VerticalAlignment="Bottom" HorizontalAlignment="Center" Stretch="Fill" Width="3832" Height="52" Panel.ZIndex="-1"/>
+                    <!-- WhiskeyHotbar: bar_bottomBg is 2424x52; stretched by the same amount as the deck (+1410: 1498 -> 2908) -->
+                    <Image Grid.ColumnSpan="3" Source="{StaticResource BarBottomBg}" Margin="0,0,0,28" VerticalAlignment="Bottom" HorizontalAlignment="Center" Stretch="Fill" Width="3834" Height="52" Panel.ZIndex="-1"/>
                     <Image Grid.Column="3" Source="{StaticResource HotbarDivider}" Margin="-24,0,0,72" Stretch="None" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
 
 
@@ -1741,6 +1754,20 @@
                                                             </MultiDataTrigger.Conditions>
                                                             <Setter Property="Visibility" Value="Collapsed"/>
                                                         </MultiDataTrigger>
+                                                        <!-- WhiskeyHotbar: Passives section defaults to 3 columns (3 * HotbarSlotSize 88); still resizable, resets to 3 on reload (verified in-game 2026-11-03) -->
+                                                        <DataTrigger Binding="{Binding HotBarType}" Value="PassivesHotBar">
+                                                            <Setter Property="SavedWidth" Value="264"/>
+                                                        </DataTrigger>
+                                                        <!-- WhiskeyHotbar TEST: hide the FixedSideBar section in the deck; vanilla also shows FixedSideBar as its own panel right of the deck -->
+                                                        <DataTrigger Binding="{Binding HotBarType}" Value="FixedSideBar">
+                                                            <Setter Property="AllowDrop" Value="False"/>
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                        <!-- WhiskeyHotbar: Custom section defaults to 12 columns (12 * 88); DeckWidth is sized so its shutter stays inside the deck (verified in-game 2026-11-03) -->
+                                                        <!-- WhiskeyHotbar: MinWidth/MaxWidth on this item froze the game when dragging its shutter (2026-11-03); removed -->
+                                                        <DataTrigger Binding="{Binding HotBarType}" Value="CustomHotBar">
+                                                            <Setter Property="SavedWidth" Value="1056"/>
+                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </ls:Concertina.ItemContainerStyle>
