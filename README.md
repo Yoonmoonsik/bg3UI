@@ -15,7 +15,8 @@ and keeps all 12 Custom slots (keys 1–0, -, =) visible on the main hotbar.
   Here it is a normal draggable divider.
 - **Cleaner deck.** The FixedSideBar section (e.g. Metamagic) is hidden inside the deck.
   It still appears in its own panel to the right of the hotbar, as in vanilla.
-- **Wider party inventory.** In the Party Panel, each character's inventory grid shows 10 columns instead of 7.
+- **Wider party inventory.** In the Party Panel, each character's inventory grid shows 10 columns instead of 7,
+  and the XP bar and weight bar are 300 units longer.
 
 ## Compatibility
 - Keyboard & mouse mode only. Controller mode uses the vanilla hotbar.
@@ -51,6 +52,8 @@ Changes still waiting for in-game confirmation are marked `WhiskeyHotbar TEST`.
 |---|---|---|
 | Character panel width | `Width="808"` | 808 + 3 × `ScaledSlotSize`, set by a hidden spacer |
 | `PanelViewRoot` `MaxWidth` | 4120 | 5388 (4 panels × 3 slots × 105.6) |
+| XP bar (name bar) | shared `XPBarTemplate`: fill 300, background 364 | local `WhiskeyXPBarTemplate`: fill 600, background 664 |
+| Weight bar | shared `WeightBarTemplate`: bar 448, fixed-size images | local `WhiskeyWeightBarTemplate`: bar 748; background 804, carry-limit 804, overlay 752 as nine-slice images |
 
 The inventory grid (`InventoryGridStyle` in `Public/Game/GUI/Library/CharacterSheetTemplates_k.xaml`) has no column count;
 its columns follow the panel width. `ScaledSlotSize` depends on the UI scale setting (70.4–105.6), so the panel grows by
@@ -78,6 +81,7 @@ whole slots at every scale.
 - Deck section column sums matched across Barbarian, Wizard and Cleric
 - Custom left shutter drawn gray
 - Party Panel inventory 10 columns, 4 panels fit without scrolling
+- Party Panel XP bar longer, still switches to the Level Up button; weight bar longer with pointer, limits and carry-limit background in place
 
 **Not yet verified (`WhiskeyHotbar TEST`):**
 - FixedSideBar collapsed in the deck, with deck width 2908

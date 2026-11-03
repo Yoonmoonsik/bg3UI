@@ -46,9 +46,345 @@
 
 
                 <!--Weight bar-->
-                <Control Grid.Row="2" Template="{StaticResource WeightBarTemplate}" Margin="0,16,0,23"  HorizontalAlignment="Center"/>
+                <Control Grid.Row="2" Template="{DynamicResource WhiskeyWeightBarTemplate}" Margin="0,16,0,23"  HorizontalAlignment="Center"/>
             </Grid>
         </ControlTemplate>
+        <!-- WhiskeyHotbar: copy of XPBarTemplate (Public/Game/GUI/Library/CharacterSheetTemplates.xaml) with a longer bar; used only by this page (verified in-game 2026-11-04) -->
+        <ControlTemplate x:Key="WhiskeyXPBarTemplate" TargetType="Control">
+            <Grid x:Name="Container" HorizontalAlignment="Center" VerticalAlignment="Top" ToolTipService.Placement="Bottom" Height="64" Background="Transparent">
+                <Grid.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource BarBaseTextStyle}"/>
+                    <!-- WhiskeyHotbar: vanilla 300; +300 -->
+                    <System:Double x:Key="xpBarWidth">600</System:Double>
+                </Grid.Resources>
+
+                <!-- Experience bar -->
+                <Grid Margin="0,12,0,0" ToolTipService.Placement="Bottom" Visibility="{Binding Stats.Level.LevelUpAvailable, Converter={StaticResource BoolToCollapsedConverter}}">
+                    <Grid.Resources>
+                        <Style x:Key="BarBackgroundImage9s" TargetType="ls:LSNineSliceImage" BasedOn="{StaticResource {x:Type ls:LSNineSliceImage}}">
+                            <Setter Property="ImageSource" Value="{StaticResource BarBg}" />
+                            <Setter Property="Slices" Value="100,16,100,32" />
+                            <Setter Property="MinHeight" Value="50" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Focusable" Value="False" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ToolTip>
+                        <ls:LSTooltip>
+                            <ls:LSTooltip.Resources>
+                                <System:Double x:Key="MaxTooltipContentWidth">720</System:Double>
+                            </ls:LSTooltip.Resources>
+                            <TextBlock TextWrapping="Wrap" MaxWidth="700" HorizontalAlignment="Center" Foreground="{StaticResource TooltipColor.Primary}" >
+    						<b:Interaction.Behaviors>
+    							<ls:CtxTransStringRunGeneratorBehavior Source="{Binding Path=DataContext.Stats.Level.Description, ElementName=Container}" ParamRunStyle="{StaticResource TooltipUnitParamRun}"/>
+    						</b:Interaction.Behaviors>
+                            </TextBlock>
+                        </ls:LSTooltip>
+                    </Grid.ToolTip>
+                    <!-- Bar background -->
+                    <ls:LSNineSliceImage x:Name="ExpereinceBar" Style="{StaticResource BarBackgroundImage9s}" Width="664" HorizontalAlignment="Center" Opacity="0.4"/>
+          
+                    <!-- Bar -->
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Top" MaxWidth="{StaticResource xpBarWidth}" Width="{StaticResource xpBarWidth}" Height="12" Margin="0,12,0,0">
+                        <ProgressBar Value="{Binding Stats.Level.FractionXPToNextLevel, Mode=OneWay}" Minimum="0" Maximum="1" BorderBrush="Transparent">
+                            <ProgressBar.Foreground>
+                                <ImageBrush ImageSource="pack://application:,,,/Core;component/Assets/CharacterPanel/xpbar_fillcolour.png"/>
+                            </ProgressBar.Foreground>
+                            <ProgressBar.Background>
+                                <ImageBrush ImageSource="pack://application:,,,/Core;component/Assets/CharacterPanel/xpbar_bg.png"/>
+                            </ProgressBar.Background>
+                        </ProgressBar>
+                        <Image VerticalAlignment="Top" Source="pack://application:,,,/Core;component/Assets/CharacterPanel/xpbar_overlay.png" Stretch="Fill" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    </Grid>
+
+                </Grid>
+
+                <!-- Level up button-->
+                <ls:LSButton x:Name="LevelUpButton" Visibility="{Binding Stats.Level.LevelUpAvailable, Converter={StaticResource BoolToVisibleConverter}}" Command="{Binding DataContext.StartLevelUp, RelativeSource={RelativeSource AncestorType={x:Type ls:UIWidget}}}" CommandParameter="{Binding}" ToolTipService.Placement="Bottom" ToolTipService.ShowOnDisabled="True">
+                    <ls:LSButton.ToolTip>
+                        <ls:LSTooltip>
+                            <TextBlock x:Name="TooltipText" ls:TextBlockFormatter.SourceText="{Binding Source='h279c7a26gafe3g440cgb460g878bbfc0bdc0', Converter={StaticResource TranslatedStringConverter}}" HorizontalAlignment="Center" Style="{DynamicResource TooltipBaseTextStyle}" TextWrapping="Wrap"/>
+                        </ls:LSTooltip>
+                    </ls:LSButton.ToolTip>
+                    <ls:LSButton.Template>
+                        <ControlTemplate TargetType="ls:LSButton">
+                            <Grid>
+                                <Image x:Name="btn" Source="pack://application:,,,/Core;component/Assets/CharacterPanel/btn_levelUp_d.png" Stretch="None"/>
+                                <Grid Margin="10,0" Height="40" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image x:Name="icon" Grid.Column="0" Source="{StaticResource IconLevelUpArrow}" Stretch="Uniform" VerticalAlignment="Center" Width="40" Margin="-10" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="ButtonText" Grid.Column="1" Text="{Binding Source='he3ccedd0gceaeg4b1fg8e74g9dfc6da58cd2', Converter={StaticResource TranslatedStringConverter}, ConverterParameter='ToUpper'}" FontSize="{DynamicResource ScaledSmallishFontSize}" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource LS_specialTxtColor}" noesis:Text.Stroke="{StaticResource Dialogue.Stroke}" noesis:Text.StrokeThickness="2"/>
+                                </Grid>
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="btn" Property="Source" Value="pack://application:,,,/Core;component/Assets/CharacterPanel/btn_levelUp_h.png"/>
+                                    <Setter TargetName="icon" Property="Source" Value="pack://application:,,,/Core;component/Assets/Shared/ico_levelUp_h.png"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="btn" Property="Source" Value="pack://application:,,,/Core;component/Assets/CharacterPanel/btn_levelUp_p.png"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="btn" Property="Source" Value="pack://application:,,,/Core;component/Assets/CharacterPanel/btn_levelUp_disabled.png"/>
+                                    <Setter TargetName="icon" Property="Source" Value="pack://application:,,,/Core;component/Assets/Shared/ico_levelUp_d.png"/>
+                                    <Setter TargetName="icon" Property="Opacity" Value="0.7"/>
+                                    <Setter TargetName="ButtonText" Property="Foreground" Value="{StaticResource LS_disabledTxtColor}"/>
+                                </Trigger>
+
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsVisible, ElementName=LevelUpButton}" Value="True"/>
+                                        <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="True"/>
+                                    </MultiDataTrigger.Conditions>
+                                    <MultiDataTrigger.EnterActions>
+                                        <BeginStoryboard Name="IconBounce">
+                                            <BeginStoryboard.Storyboard>
+                                                <Storyboard>
+                                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Width" Storyboard.TargetName="icon" RepeatBehavior="Forever">
+                                                        <EasingDoubleKeyFrame KeyTime="0" Value="40"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:2.0" Value="40"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:2.2" Value="60"/>
+                                                        <EasingDoubleKeyFrame KeyTime="0:0:2.4" Value="40"/>
+                                                    </DoubleAnimationUsingKeyFrames>
+                                                </Storyboard>
+                                            </BeginStoryboard.Storyboard>
+                                        </BeginStoryboard>
+                                    </MultiDataTrigger.EnterActions>
+                                    <MultiDataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="IconBounce"/>
+                                    </MultiDataTrigger.ExitActions>
+                                </MultiDataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ls:LSButton.Template>
+                </ls:LSButton>
+
+                <TextBlock x:Name="MaximumLevelReachedText" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" ls:TextBlockFormatter.SourceText="{Binding Source='h33818cfagfc3bg4ba8g8d37g45c69b3fb3cf',Converter={StaticResource TranslatedStringConverter}}" Visibility="Collapsed"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelectedCharacter}" Value="True">
+                    <Setter TargetName="ExpereinceBar" Property="Opacity" Value="1"/>
+                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Stats.Level.LevelUpAvailable}" Value="False"/>
+                        <Condition Binding="{Binding Stats.Level.MaximumXpCapReached}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter TargetName="LevelUpButton" Property="Visibility" Value ="Collapsed"/>
+                        <Setter TargetName="MaximumLevelReachedText" Property="Visibility" Value="Visible"/>
+                        <Setter TargetName="Container" Property="IsHitTestVisible" Value="False"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Stats.Level.LevelUpAvailable}" Value="True"/>
+                        <Condition Binding="{Binding Stats.IsAlive}" Value="False"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter TargetName="TooltipText" Property="ls:TextBlockFormatter.SourceText" Value="{Binding Source='h1f265a44gb7d4g427dga60fgea3d2e3302b1', Converter={StaticResource TranslatedStringConverter}}"/>
+                        <Setter TargetName="LevelUpButton" Property="IsEnabled" Value="False"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Stats.Level.LevelUpAvailable}" Value="True"/>
+                        <Condition Binding="{Binding DownedInfo.Active}" Value="True"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter TargetName="TooltipText" Property="ls:TextBlockFormatter.SourceText" Value="{Binding Source='h11ebc4efg1100g4d39g8ea1g5dc2e4a51c03', Converter={StaticResource TranslatedStringConverter}}"/>
+                        <Setter TargetName="LevelUpButton" Property="IsEnabled" Value="False"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Stats.Level.LevelUpAvailable}" Value="True"/>
+                        <Condition Binding="{Binding CharacterMode}" Value="InCombat"/>
+                    </MultiDataTrigger.Conditions>
+                    <MultiDataTrigger.Setters>
+                        <Setter TargetName="TooltipText" Property="ls:TextBlockFormatter.SourceText" Value="{Binding Source='h5352e5c4g581cg4199gb42cg3a2473f3040b', Converter={StaticResource TranslatedStringConverter}}"/>
+                        <Setter TargetName="LevelUpButton" Property="IsEnabled" Value="False"/>
+                    </MultiDataTrigger.Setters>
+                </MultiDataTrigger>
+
+                <DataTrigger Binding="{Binding DataContext.CurrentPlayer.UIData.AllowInteraction, RelativeSource={RelativeSource AncestorType={x:Type ls:UIWidget}}}" Value="False">
+                    <Setter TargetName="LevelUpButton" Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!-- WhiskeyHotbar: copy of WeightBarTemplate (Public/Game/GUI/Library/CharacterSheetTemplates.xaml) with a bar 300 longer; used only by this page (verified in-game 2026-11-04) -->
+        <ControlTemplate x:Key="WhiskeyWeightBarTemplate" TargetType="Control">
+            <ControlTemplate.Resources>
+                <BitmapImage x:Key="PointerWeight" UriSource="pack://application:,,,/Core;component/Assets/Shared/Weight_Encumbrance/pointer_weight.png"/>
+            </ControlTemplate.Resources>
+            <Grid ToolTipService.Placement="Top" ToolTipService.VerticalOffset="4" Background="Transparent">
+                <Grid.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource BarBaseTextStyle}"/>
+                </Grid.Resources>
+
+                <Grid.ToolTip>
+                    <ls:LSTooltip Content="{Binding Source='h97226633g565ag44c0gbd64g89e70c886cba',Converter={StaticResource TranslatedStringConverter}}"/>
+                </Grid.ToolTip>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Weight icon -->
+                <Image x:Name="currentWeightIcon" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Top" Source="{StaticResource NormalWeightIcon}" Stretch="None" Margin="0,0,-6,0"/>
+
+                <!-- Weight bar -->
+                <Grid Grid.Column="1" Margin="0,12,0,0">
+                    <!-- Bar background -->
+                    <!-- WhiskeyHotbar: bar_mainFooter is 504x52; nine-slice with the same slices the XP bar uses, 504 + 300 -->
+                    <ls:LSNineSliceImage x:Name="WeightBG" Opacity="0.4" VerticalAlignment="Top" HorizontalAlignment="Left" ImageSource="{StaticResource BarBg}" Slices="100,16,100,32" Width="804" Height="52"/>
+                    <!-- WhiskeyHotbar: bar_mainFooter_carryLimit is 504x36; nine-slice keeping 100 on each side, 504 + 300 -->
+                    <ls:LSNineSliceImage x:Name="barBackgroundCarryLimit" VerticalAlignment="Top" HorizontalAlignment="Left" ImageSource="{StaticResource BarMainFooterCarryLimit}" Slices="100,0,100,0" Width="804" Height="36"/>
+
+                    <!-- Bar -->
+                    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,12,0,0">
+                        <Grid.Resources>
+                            <!-- WhiskeyHotbar: vanilla 448; +300 -->
+                            <System:Double x:Key="weightBarWidth">748</System:Double>
+                        </Grid.Resources>
+
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="{StaticResource weightBarWidth}" Width="{StaticResource weightBarWidth}" Height="12">
+                            <!-- Encumbrance limits -->
+                            <Grid HorizontalAlignment="Left" Width="{StaticResource weightBarWidth}" ToolTipService.Placement="Top" ToolTipService.VerticalOffset="4">
+                                <Image Source="{StaticResource BarWeightHeavilyEncumberedDisabled}" Stretch="Fill"/>
+                                <Grid.ToolTip>
+                                    <ls:LSTooltip>
+                                        <TextBlock>
+                                            <Run Text="{Binding Source='h18065f0dg0169g4560gaff3g46fea09fd366',Converter={StaticResource TranslatedStringConverter}}"/>
+                                            <Run Foreground="{StaticResource LS_bar100TxtColor}">
+                                                <Run.Text>
+                                                    <MultiBinding StringFormat="{}:{0} ~ {1}">
+                                                        <Binding Path="EncumbranceStats.WeightHeavy" Converter="{StaticResource UnitConverter}" ConverterParameter="Weight N2 Short"/>
+                                                        <Binding Path="EncumbranceStats.WeightMaximum" Converter="{StaticResource UnitConverter}" ConverterParameter="Weight N2 Short"/>
+                                                    </MultiBinding>
+                                                </Run.Text>
+                                            </Run>
+                                        </TextBlock>
+                                    </ls:LSTooltip>
+                                </Grid.ToolTip>
+                            </Grid>
+                            <Grid HorizontalAlignment="Left" Width="{Binding EncumbranceStats.WeightHeavyPercentage, Converter={StaticResource MultiplierConverter}, ConverterParameter={StaticResource weightBarWidth}}" ToolTipService.Placement="Top" ToolTipService.VerticalOffset="4">
+                                <Image Source="{StaticResource BarWeightEncumberedDisabled}" Stretch="Fill"/>
+                                <Grid.ToolTip>
+                                    <ls:LSTooltip>
+                                        <TextBlock>
+                                            <Run Text="{Binding Source='h4bffc7fbgfeaag44d9gb179gfd55c807b440',Converter={StaticResource TranslatedStringConverter}}"/>
+                                            <Run Foreground="{StaticResource LS_bar50TxtColor}">
+                                                <Run.Text>
+                                                    <MultiBinding StringFormat="{}:{0} ~ {1}">
+                                                        <Binding Path="EncumbranceStats.WeightLight" Converter="{StaticResource UnitConverter}" ConverterParameter="Weight N2 Short"/>
+                                                        <Binding Path="EncumbranceStats.WeightHeavy" Converter="{StaticResource UnitConverter}" ConverterParameter="Weight N2 Short"/>
+                                                    </MultiBinding>
+                                                </Run.Text>
+                                            </Run>
+                                        </TextBlock>
+                                    </ls:LSTooltip>
+                                </Grid.ToolTip>
+                            </Grid>
+                            <Image HorizontalAlignment="Left" Width="{Binding EncumbranceStats.WeightLightPercentage, Converter={StaticResource MultiplierConverter}, ConverterParameter={StaticResource weightBarWidth}}"
+                                   Source="{StaticResource BarWeightNormalDisabled}" Stretch="Fill"/>
+
+                            <!-- Current weight bar -->
+                            <ProgressBar x:Name="currentWeightBar" Value="{Binding EncumbranceStats.CurrentWeight, Mode=OneWay}" Minimum="0" Maximum="{Binding EncumbranceStats.WeightMaximum}" Background="Transparent" BorderBrush="Transparent" IsHitTestVisible="False">
+                                <ProgressBar.Foreground>
+                                    <ImageBrush ImageSource="{StaticResource BarWeightNormal}"/>
+                                </ProgressBar.Foreground>
+                            </ProgressBar>
+                        </Grid>
+
+                        <!-- Current weight pointer -->
+                        <Grid HorizontalAlignment="Left" IsHitTestVisible="False" MaxWidth="{StaticResource weightBarWidth}" Width="{Binding EncumbranceStats.WeightCurrentPercentage, Converter={StaticResource MultiplierConverter}, ConverterParameter={StaticResource weightBarWidth}}">
+                            <Canvas HorizontalAlignment="Right">
+                                <Image x:Name="currentWeightPointer" Margin="-14,-25,0,0" ClipToBounds="False" Source="{StaticResource PointerWeight}" Stretch="None"/>
+                                <TextBlock x:Name="currentWeightText" Text="{Binding EncumbranceStats.CurrentWeight, Converter={StaticResource UnitConverter}, ConverterParameter='Weight N2'}" Margin="0,14,0,0"
+                                           Canvas.Left="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource DivideConverter}, ConverterParameter=-2}"/>
+                            </Canvas>
+                        </Grid>
+
+                        <!-- Dividers -->
+                        <Image HorizontalAlignment="Left" IsHitTestVisible="False" Margin="-2,0,0,0" Source="{StaticResource BarDivider}" Stretch="None">
+                            <Image.RenderTransform>
+                                <TranslateTransform X="{Binding EncumbranceStats.WeightLightPercentage, Converter={StaticResource MultiplierConverter}, ConverterParameter={StaticResource weightBarWidth}}"/>
+                            </Image.RenderTransform>
+                        </Image>
+
+                        <Image HorizontalAlignment="Left" IsHitTestVisible="False" Margin="-2,0,0,0" Source="{StaticResource BarDivider}" Stretch="None">
+                            <Image.RenderTransform>
+                                <TranslateTransform X="{Binding EncumbranceStats.WeightHeavyPercentage, Converter={StaticResource MultiplierConverter}, ConverterParameter={StaticResource weightBarWidth}}"/>
+                            </Image.RenderTransform>
+                        </Image>
+                    </Grid>
+
+                    <!-- Bar overlay -->
+                    <!-- WhiskeyHotbar: bar_mainFooter_overlay is 452x16; nine-slice keeping 40 on each side, 452 + 300 -->
+                    <ls:LSNineSliceImage VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,10,0,0" ImageSource="{StaticResource BarMainFooterOverlay}" Slices="40,0,40,0" Width="752" Height="16" IsHitTestVisible="False"/>
+                
+                    <!-- Carry limit exceeded text -->
+                    <Canvas HorizontalAlignment="Center" VerticalAlignment="Bottom">
+                        <TextBlock x:Name="carryLimitText" Margin="0,-24,0,0" MaxWidth="380" ClipToBounds="False" TextAlignment="Center" TextWrapping="Wrap" Foreground="{StaticResource LS_bar100TxtColor}"
+                               Text="{Binding Source='h5f15514bgc4fcg4386ga1c3g65fbf8bc2ef5', Converter={StaticResource TranslatedStringConverter}}"
+                               Canvas.Left="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource DivideConverter}, ConverterParameter=-2}"/>
+                    </Canvas>
+                </Grid>
+
+                <!-- Max weight -->
+                <TextBlock x:Name="maxWeightText" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="8,0,0,0" Text="{Binding EncumbranceStats.WeightMaximum, Converter={StaticResource UnitConverter}, ConverterParameter='Weight N2'}"/>
+
+            </Grid>
+            <ControlTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSelectedCharacter}" Value="True">
+                    <Setter TargetName="WeightBG" Property="Opacity" Value="1"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding EncumbranceStats.EncumberanceState}" Value="Light">
+                    <Setter TargetName="currentWeightIcon" Property="Source" Value="{StaticResource IconWeightEncumbered}"/>
+                    <Setter TargetName="currentWeightBar" Property="Foreground">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="{StaticResource BarWeightEncumbered}"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter TargetName="currentWeightPointer" Property="Source" Value="pack://application:,,,/Core;component/Assets/Shared/Weight_Encumbrance/pointer_encumbrance.png"/>
+                    <Setter TargetName="currentWeightText" Property="Foreground" Value="{StaticResource LS_bar50TxtColor}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding EncumbranceStats.EncumberanceState}" Value="Heavy">
+                    <Setter TargetName="currentWeightIcon" Property="Source" Value="pack://application:,,,/Core;component/Assets/Shared/Weight_Encumbrance/ico_weight_heavilyEncumbered.png"/>
+                    <Setter TargetName="currentWeightBar" Property="Foreground">
+                        <Setter.Value>
+                            <ImageBrush ImageSource="pack://application:,,,/Core;component/Assets/Shared/Weight_Encumbrance/bar_weight_heavilyEncumbered_d.png"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter TargetName="currentWeightPointer" Property="Source" Value="pack://application:,,,/Core;component/Assets/Shared/Weight_Encumbrance/pointer_heavyEncumbrance.png"/>
+                    <Setter TargetName="currentWeightText" Property="Foreground" Value="{StaticResource LS_bar100TxtColor}"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding EncumbranceStats.IsOverEncumbared}" Value="False">
+                    <Setter TargetName="barBackgroundCarryLimit" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="maxWeightText" Property="Foreground" Value="{StaticResource LS_extraspecialTxtColor}"/>
+                    <Setter TargetName="carryLimitText" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding EncumbranceStats.IsOverEncumbared}" Value="True">
+                    <Setter TargetName="currentWeightIcon" Property="Source" Value="pack://application:,,,/Core;component/Assets/Shared/Weight_Encumbrance/ico_weight_weightLimit.png"/>
+                    <Setter TargetName="barBackgroundCarryLimit" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="maxWeightText" Property="Foreground" Value="{StaticResource LS_bar100TxtColor}"/>
+                    <Setter TargetName="carryLimitText" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
     </ls:UIWidget.Resources>
 
     <Grid x:Name="PanelRoot" Background="{StaticResource LS_PanelBackground}" ls:TooltipExtender.Owner="{Binding CurrentPlayer.SelectedCharacter}" noesis:Element.PPAAMode="Disabled" >
@@ -475,7 +811,7 @@
                                                         </ComboBoxItem>
                                                     </ComboBox>
 
-                                                    <Control x:Name="HPBar" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,44,0,-44" Template="{DynamicResource XPBarTemplate}" Panel.ZIndex="100">
+                                                    <Control x:Name="HPBar" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,44,0,-44" Template="{StaticResource WhiskeyXPBarTemplate}" Panel.ZIndex="100">
                                                         <Control.ToolTip>
                                                             <ls:LSTooltip>
                                                                 <ls:LSTooltip.Resources>
