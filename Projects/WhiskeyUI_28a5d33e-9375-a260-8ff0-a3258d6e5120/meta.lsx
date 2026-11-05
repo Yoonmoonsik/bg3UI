@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<save>
+    <version major="4" minor="8" revision="0" build="500"/>
+    <region id="MetaData">
+        <node id="root">
+            <attribute id="GameProject" type="LSString" value=""/>
+            <attribute id="Module" type="LSString" value="28a5d33e-9375-a260-8ff0-a3258d6e5120"/>
+            <attribute id="Name" type="LSString" value="WhiskeyUI"/>
+            <attribute id="UUID" type="LSString" value="7fe31971-e587-bfc7-0a4f-9e19446e9b85"/>
+            <attribute id="UpdatedDependencies" type="bool" value="true"/>
+            <children>
+                <node id="Categories"/>
+            </children>
+        </node>
+    </region>
+</save>
