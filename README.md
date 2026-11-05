@@ -25,8 +25,11 @@ Whiskey UI widens both, and adds spell slots and action resources to the charact
 - **Action, bonus action and reaction.** Shown above the spell slots, in combat only.
   Each icon changes when that resource is used.
 
+### Reaction popup
+- **Do Not React shortcut.** Press your Short Rest key to choose Do Not React. The button shows which key it is.
+
 ## Compatibility
 - Keyboard & mouse mode only. Controller mode uses the vanilla UI.
-- Replaces the vanilla hotbar, character portraits and Party Panel by overriding the `PlayerHUD` and `PartyPanel` UI states.
+- Replaces the vanilla hotbar, character portraits, Party Panel and reaction popup by overriding the `PlayerHUD`, `PartyPanel` and `ReactionsPopup` UI states.
   Other mods that also override them will conflict; whichever mod loads last wins.
 - **Not compatible with ImpUI.**

@@ -115,5 +115,30 @@
             </ls:State.Events>
         </ls:State>
 
+        <!--STATE: ReactionsPopup -->
+        <!-- Copied from MainUI Keyboard.xaml; only the page is replaced, so the skip key presses Do Not React -->
+        <ls:State Name = "ReactionsPopup" Layout = "Player" Owner = "Player" DisableStatesBelow="True" ModType="Override">
+            <ls:State.Widgets>
+                <ls:StateWidget Filename="WhiskeyReactionDecisionPopup.xaml" Layer="PopupPanels"/>
+            </ls:State.Widgets>
+            <ls:State.Events>
+                <ls:StateEvent Name = "CloseReactionsPopup">
+                    <ls:StateEvent.Actions>
+                        <ls:RemoveState/>
+                    </ls:StateEvent.Actions>
+                </ls:StateEvent>
+                <ls:StateEvent Name = "OpenExamine">
+                    <ls:StateEvent.Actions>
+                        <ls:PushState Name="Examine"/>
+                    </ls:StateEvent.Actions>
+                </ls:StateEvent>
+                <ls:StateEvent Name = "IE.ToggleInGameMenu">
+                    <ls:StateEvent.Actions>
+                        <ls:PushState Name="Paused"/>
+                    </ls:StateEvent.Actions>
+                </ls:StateEvent>
+            </ls:State.Events>
+        </ls:State>
+
     </ls:StateMachine.States>
 </ls:StateMachine>
